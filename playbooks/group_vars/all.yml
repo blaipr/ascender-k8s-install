@@ -4,10 +4,6 @@
 # This variable specificies which Kubernetes platform Ascender and its components will be installed on.
 k8s_platform: k3s # Options include k3s, eks and dkp, with more to come.
 
-# Determines whether to use HTTP or HTTPS for Ascender and Ledger.
-# If set to https, you MUST provide certificate/key options for the Installer to use.
-k8s_lb_protocol: http #options include http and https
-
 # Routable IP address for the K8s API Server
 # (This could be a Load Balancer if using 3 K8s control nodes)
 kubeapi_server_ip: "127.0.0.1"
@@ -20,23 +16,12 @@ kubeapi_server_ip: "127.0.0.1"
 # rke2: N/A, as you must use Labyrinth Labs' Ansible role to set up a fresh kubernetes cluster
 kube_install: false
 
-# Offline Install - Whether to use local assets to complete the install
-k8s_offline: false 
-
 # Firewall Disable - For most K8s installs, firewalls are recommended to be disabled, set this to false if
 # if you need the firewall to stay enabled
 firewalld_disable: true
 
 # Specify an INTERNAL container registry and namespace where the k8s cluster can access Ascender images
 k8s_container_registry: ""
-
-# Kubernetes secret containing the login credentials required for the INTERNAL registry holding the ASCENDER images
-#LEAVE AS NONE if no such secret is required
-k8s_image_pull_secret: None
-
-# Kubernetes secret containing the login credentials required for the INTERNAL registry holding the EXECUTION ENVIRONMENT images
-#LEAVE AS NONE if no such secret is required
-k8s_ee_pull_credentials_secret: None
 
 # Indictates whether or not the kubeconfig file needs to be downloaded to the Ansible controller
 download_kubeconfig: false
@@ -126,12 +111,6 @@ EKS_NUM_WORKER_NODES: 3
 # The size of the Elastic Block Storage volume for each worker node
 EKS_WORKER_VOLUME_SIZE: 100
 
-# The ARN for the SSL certificate; required when k8s_lb_protocol is https.
-# The same certificate is used for all components (currently Ascender and Ledger); 
-# as such, we recommend that the certificate is set for a wildcard domain
-# (e.g., *.example.com)
-EKS_SSL_CERT: arn:aws:acm:<region>:xxxxxxxxxx:certificate/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxx
-
 # The Amazon Elastic Block Store Container Storage Interface (CSI) Driver provides
 # a CSI interface used by Container Orchestrators to manage the lifecycle of Amazon EBS volumes.
 # This variable specifies the version in use by the cluster; all releases can be found here:
@@ -158,179 +137,10 @@ DKP_CLUSTER_NAME: dkp-cluster
 # https://github.com/rancher/rke2/releases
 RKE2_BINARY_URL: https://github.com/rancher/rke2/releases/download/v1.25.16%2Brke2r1/rke2.linux-amd64
 
-
-# ---Local artifact variables---
-
-# TLS Certificate file, required when deploying HTTPS in K3s
-tls_crt_path: "~/ascender.crt"
-
-# TLS Private Key file, required when deploying HTTPS in K3s
-tls_key_path: "~/ascender.key"
-
-# Set to false if using an external DNS server for resolution
-# Set to true if not
-use_etc_hosts: true
-
 # A directory in which to place both temporary artifacts
 # and timestamped Kubernetes Manifests to make Ascender/Ledger easy
 # to uninstall
 tmp_dir: "{{ playbook_dir }}/../ascender_install_artifacts"
-
-# ---Ascender install variables---
-
-# DNS resolvable hostname for Ascender service. This is required for install.
-ASCENDER_HOSTNAME: ascender.example.com
-
-# The domain name for all components; required when k8s_platorm=="eks"
-ASCENDER_DOMAIN: example.com
-
-# k8s namespace for Ascender k8s objects
-ASCENDER_NAMESPACE: ascender
-
-# Administrator username for Ascender
-ASCENDER_ADMIN_USER: admin
-
-# Administrator password for Ascender
-ASCENDER_ADMIN_PASSWORD: "myadminpassword"
-
-# The OCI container image for Ascender
-ASCENDER_IMAGE: ghcr.io/ctrliq/ascender
-
-# The image tag indicating the version of Ascender you wish to install
-ASCENDER_VERSION: 25.3.6
-
-# The version of the AWX Operator used to install Ascender and its components
-ASCENDER_OPERATOR_VERSION: 2.19.5
-
-# DNS resolvable hostname for Ascender Mesh service.  This is used by Execution Nodes to access Ascender.
-# Mesh will not be setup unless this is configured
-#ASCENDER_MESH_HOSTNAME: mesh.ascender.example.com
-
-# Determines whether to keep the secrets required to encrypt within Ascender (important when backing up)
-ascender_garbage_collect_secrets: true
-
-# Setup extra demo playbooks after installation
-ascender_setup_playbooks: true
-
-# # External PostgreSQL ip or url resolvable by the cluster
-# ASCENDER_PGSQL_HOST: "ascenderpghost.example.com" 
-
-# # External PostgreSQL port, this usually defaults to 5432
-# ASCENDER_PGSQL_PORT: 5432 
-
-# # External PostgreSQL username
-# ASCENDER_PGSQL_USER: ascender
-
-# # External PostgreSQL password
-# NOTE: Do NOT use the special characters in the postgres password (Django requirement)
-# ASCENDER_PGSQL_PWD: mypgadminpassword
-
-# # External PostgreSQL database name used for Ascender (this DB must exist)
-# ASCENDER_PGSQL_DB: ascenderdb
-
-# # Used to increase the default size of the Postgres Storage PVC.
-# # !!! Do not set or change this for an existing install !!!
-# # The Operator does not currently handle increasing sizes, must be done manually if your StorageClass allows
-# POSTGRES_PVC_SIZE_GB: 8
-
-# # Set the Storage Class for your PVC
-# # !!! Do not set or change this for an existing install !!!
-# POSTGRES_STORAGE_CLASS: local-path
-
-### All of these options are unnecessary to change, but will allow you to tweak your Ascender deployment if you choose to change them
-ascender_replicas: 1
-ascender_image_pull_policy: Always
-
-
-  # ---Ascender React install variables---
-# Determines whether or not Ascender React will be installed
-REACT_INSTALL: false
-
-# DNS resolvable hostname for Ascender React service. This is required for install.
-REACT_HOSTNAME: react.example.com
-
-# k8s namespace for Ascender React k8s objects
-REACT_NAMESPACE: react
-
-# Administrator username for Ascender React
-REACT_ADMIN_USER: admin
-
-# Administrator password for Ascender React
-REACT_ADMIN_PASSWORD: "myadminpassword"
-
-# The version of the EDA Operator used to install Ascender React and its components
-REACT_OPERATOR_VERSION: 1.0.2
-
-# The OCI container image for Ascender React
-REACT_IMAGE: quay.io/ansible/eda-server
-REACT_IMAGE_VERSION: main
-
-# The OCI container image for Ascender React UI
-REACT_IMAGE_WEB: quay.io/ansible/eda-ui
-REACT_IMAGE_WEB_VERSION: 2.4.1132
-
-# TLS Certificate file, required when deploying HTTPS in K3s
-react_tls_crt_path: "~/ascender.crt"
-
-# TLS Private Key file, required when deploying HTTPS in K3s
-react_tls_key_path: "~/ascender.key"
-
-# # External PostgreSQL ip or url resolvable by the cluster
-# REACT_PGSQL_HOST: "reactpghost.example.com"
-
-# # External PostgreSQL port, this usually defaults to 5432
-# REACT_PGSQL_PORT: 5432
-
-# # External PostgreSQL username
-# REACT_PGSQL_USER: react
-
-# # External PostgreSQL password
-# NOTE: Do NOT use the special characters in the postgres password (Django requirement)
-# REACT_PGSQL_PWD: mypgadminpassword
-
-# # External PostgreSQL database name used for Ascender (this DB must exist)
-# REACT_PGSQL_DB: reactdb
-
-
-
-# ---Ledger install variables---
-
-# Determines whether or not Ledger will be installed
-LEDGER_INSTALL: true
-
-# DNS resolvable hostname for Ledger service. This is required for install.
-LEDGER_HOSTNAME: ledger.example.com
-
-# The OCI container image for Ledger
-LEDGER_WEB_IMAGE: ghcr.io/ctrliq/ascender-ledger/ledger-web
-
-# The number of ledger web pods - this is good to ensure high availability
-ledger_web_replicas: 1
-
-# The OCI container image for the Ledger Parser
-LEDGER_PARSER_IMAGE: ghcr.io/ctrliq/ascender-ledger/ledger-parser
-
-# The number of ledger parser pods - this is good to ensure high availability
-ledger_parser_replicas: 1
-
-# The OCI container image for the Ledger Database
-LEDGER_DB_IMAGE: ghcr.io/ctrliq/ascender-ledger/ledger-db
-
-# The image tag indicating the version of Ledger you wish to install
-LEDGER_VERSION: latest
-
-# The Kubernetes namespace in which Ledger objects will live
-LEDGER_NAMESPACE: ledger
-
-# Admin password for Ledger (the username is admin by default)
-LEDGER_ADMIN_PASSWORD: "myadminpassword"
-
-# Password for Ledger database
-LEDGER_DB_PASSWORD: "mydbpassword"
-
-# # Used to increase the default size of the MariaDB Storage PVC.
-# # !!! Do not set or change this for an existing install !!!
-LEDGER_PVC_SIZE_GB: 10
 
 required_collections:
   - name: amazon.aws

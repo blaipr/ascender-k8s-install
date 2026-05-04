@@ -124,15 +124,7 @@ fi
 
 check_collections
 if [ $? -ne 1 ]; then
-  echo "#### INSTALLING COLLECTIONS ####"
-  if [ -f "$(dirname $0)/offline/collections/ansible-posix-1.5.4.tar.gz" ]; then
-    ansible-galaxy collection install $(dirname $0)/offline/collections/ansible-posix-1.5.4.tar.gz
-    ansible-galaxy collection install $(dirname $0)/offline/collections/awx-awx-22.3.0.tar.gz
-    ansible-galaxy collection install $(dirname $0)/offline/collections/community-general-8.3.0.tar.gz
-    ansible-galaxy collection install $(dirname $0)/offline/collections/kubernetes-core-2.4.0.tar.gz
-  else
-    ansible-galaxy install -r collections/requirements.yml
-  fi
+  ansible-galaxy install -r collections/requirements.yml
 fi
 
 PASSED_ARG=$@
