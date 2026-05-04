@@ -53,4 +53,4 @@ This will skip the step that tries to retrieve the kubeconfig from the target sy
 
 ## References
 
-* [Ascender K3S Install Docs](https://github.com/ctrliq/ascender-install/blob/main/docs/k3s/README.md)
+* [K3s cluster installation docs](../installation/k3s/README.md)

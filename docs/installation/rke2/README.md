@@ -1,9 +1,8 @@
-The Ascender installer is a script that makes for relatively easy
-install of Ascender Automation Platform on Kubernetes platforms of
-multiple flavors. The installer is being expanded to new Kubernetes
-platforms as users/contributors allow, and if you have specific needs
-for a platform not yet supported, please submit an issue to this
-Github repository.
+This guide covers creating and configuring an RKE2 cluster with this
+repository. It was split from https://github.com/ctrliq/ascender-install,
+which now contains the steps for installing Ascender itself. If you
+need to install Ascender after the cluster is ready, use that
+repository.
 
 ## Table of Contents
 
@@ -14,8 +13,7 @@ Github repository.
 ## General Prerequisites
 
 If you have not done so already, be sure to follow the general
-prerequisites found in the [Ascender-Install main
-README](../../README.md#general-prerequisites)
+prerequisites found in the [main README](../../README.md#general-prerequisites)
 
 ## RKE2 Preamble
 
@@ -109,16 +107,16 @@ README](../../README.md#general-prerequisites)
 
 ### Obtain the sources
 
-You can use the `git` command to clone the ascender-install repository or you can download the zipped archive. 
+You can use the `git` command to clone the ascender-k8s-install repository or you can download the zipped archive.
 
 To use git to clone the repository run:
 
 ```
-git clone https://github.com/ctrliq/ascender-install.git
+git clone https://github.com/ctrliq/ascender-k8s-install.git
 ```
-This will create a directory named `ascender-install` in your present working directory (PWD).
+This will create a directory named `ascender-k8s-install` in your present working directory (PWD).
 
-We will refer to this directory as the <ASCENDER-INSTALL-SOURCE> in the remainder of this instructions.
+We will refer to this directory as the <K8S-INSTALL-SOURCE> in the remainder of this instructions.
 
 ### Set the configuration variables for a RKE2 Install
 
@@ -127,16 +125,16 @@ We will refer to this directory as the <ASCENDER-INSTALL-SOURCE> in the remainde
 You can run the bash script at 
 
 ```
-< ASCENDER-INSTALL-SOURCE >/config_vars.sh
+< K8S-INSTALL-SOURCE >/config_vars.sh
 ```
 
-The script will take you through a series of questions, that will populate the variables file requires to install Ascender. This variables file will be located at:
+The script will take you through a series of questions that will populate the variables file required to create the RKE2 cluster. This variables file will be located at:
 
 ```
-< ASCENDER-INSTALL-SOURCE >/custom.config.yml
+< K8S-INSTALL-SOURCE >/custom.config.yml
 ```
 
-Afterward, you can simply edit this file should you not want to run the script again before installing Ascender.
+Afterward, you can simply edit this file should you not want to run the script again before recreating the cluster.
 
 ### Run the setup script
 
@@ -158,27 +156,5 @@ PLAY RECAP *********************************************************************
 ascender_host              : ok=14   changed=6    unreachable=0    failed=0    skipped=2    rescued=0    ignored=0
 localhost                  : ok=72   changed=27   unreachable=0    failed=0    skipped=4    rescued=0    ignored=0
 
-ASCENDER SUCCESSFULLY SETUP
+CLUSTER SUCCESSFULLY SETUP
 ```
-
-
-### Connecting to Ascender Web UI
-
-The Ascender and Ledger web UIs are served from the `kubeapi_server_ip` specified in the config file used in the Ascender installer, and together with the Ingress object for Ascender and Legder, will give access to the respective GUIs.
-
-To ensure access to the Ascender and Ledger GUIs, ensure that the `ASCENDER_HOSTNAME` resolves to `kubeapi_server_ip` with a DNS query. If the IP address is not being served by a DNS server, you will have to add that rule locally on the server you are using to connect to the Ascender GUI. For example, on a Mac, the file `/private/etc/hosts` would need the following line added:
-
-```
-127.0.0.1	localhost
-255.255.255.255	broadcasthost
-::1             localhost
-<kubeapi_server_ip>     <ASCENDER_HOSTNAME>
-```
-Afterward, ou can visit/Browse/Administer your Ascender instance by pointing your web browser to:
-
-https://<ASCENDER_HOSTNAME>
-
-
-The username and the corresponding password are stored in <ASCENDER-INSTALL-SOURCE>/default.config.yml (or <ASCENDER-INSTALL-SOURCE>/custom.config.yml) under the `ASCENDER_ADMIN_USER` and `ASCENDER_ADMIN_PASSWORD` variable, respectively.
-
-

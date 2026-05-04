@@ -1,6 +1,6 @@
 # Installation Guides
 
-These guides will walk you through the basics of setting up Ascender for the different Kubernetes flavors.
+These guides walk you through creating and configuring the Kubernetes clusters used by Ascender deployments. For instructions on installing Ascender after the cluster exists, see https://github.com/ctrliq/ascender-install.
 - [Azure Kubernetes Service (AKS)](installation/aks/README.md)
 - [D2iQ Kubernetes Management Platform (DKP)](installation/dkp/README.md)
 - [Amazon Elastic Kubernetes Service (EKS)](installation/eks/README.md)

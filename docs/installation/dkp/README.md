@@ -1,22 +1,20 @@
-The Ascender installer is a script that makes for relatively easy
-install of Ascender Automation Platform on Kubernetes platforms of
-multiple flavors. The installer is being expanded to new Kubernetes
-platforms as users/contributors allow, and if you have specific needs
-for a platform not yet supported, please submit an issue to this
-Github repository.
+This guide covers creating and configuring a DKP cluster with this
+repository. It was split from https://github.com/ctrliq/ascender-install,
+which now contains the steps for installing Ascender itself. If you
+need to install Ascender after the cluster is ready, use that
+repository.
 
 ## Table of Contents
 
 - [General Prerequisites](#general-prerequisites)
 - [DKP-specific Install Notes](#dkp-specific-install-notes)
 - [DKP-specific Prerequisites](#dkp-specific-prerequisites)
-- [Ascender Install Instructions](#ascender-install-instructions)
+- [Cluster Install Instructions](#cluster-install-instructions)
 
 ## General Prerequisites
 
 If you have not done so already, be sure to follow the general
-prerequisites found in the [Ascender-Install main
-README](../../README.md#general-prerequisites)
+prerequisites found in the [main README](../../README.md#general-prerequisites)
 
 ## DKP-specific Install Notes
 
@@ -29,19 +27,18 @@ README](../../README.md#general-prerequisites)
   - [Traefik Labs ingress controller](https://traefik.io/solutions/kubernetes-ingress/) - this is provided by the [Kommander](https://d2iq.com/products/kommander) Management Plane as part of DKP.
   - vSphere 7.0.3 with appropriate [user permissions](https://docs.d2iq.com/dkp/2.5/vsphere-minimum-user-permissions)
 - SSL Certificate and Key
-  - To enable HTTPS on your website, you need to provide the Ascender
-    installer with an SSL Certificate file, and a Private Key
-    file. While these can be self-signed certificates, it is best
-    practice to use a trusted certificate, issued by a Certificate
-    Authority. A good way to generate a trusted Certificate for the
-    purpose of sandboxing, is to use the free Certificate Authority,
-    [Let's Encrypt](https://letsencrypt.org/getting-started/).
+  - To enable HTTPS on your cluster endpoint, you need to provide the
+    installer with an SSL Certificate file and a Private Key file.
+    While these can be self-signed certificates, it is best practice
+    to use a trusted certificate issued by a Certificate Authority. A
+    good way to generate a trusted certificate for sandboxing is to use
+    the free Certificate Authority, [Let's Encrypt](https://letsencrypt.org/getting-started/).
   - Once you have a Certificate and Private Key file, make sure they
-    are present on the Ascender installing server, and specify their
-    locations in the default config file, with the variables
-    `tls_crt_path`and `tls_key_path`, respectively. The installer will
-    parse these files for their content, and use the content to create
-    a Kubernetes TLS Secret for HTTPS enablement.
+    are present on the machine running the installer and specify their
+    locations in the default config file with the variables
+    `tls_crt_path` and `tls_key_path`, respectively. The installer will
+    parse these files for their content and use the content to create a
+    Kubernetes TLS Secret for HTTPS enablement.
 
 ## DKP-specific Prerequisites
 
@@ -67,11 +64,11 @@ Keep in mind that these intructions, while some general, will help primarily wit
   - [DKP 2.5 Components and Applications](https://docs.d2iq.com/dkp/2.5/dkp-2-5-0-components-and-applications)
 
 
-## Ascender Install Instructions
+## Cluster Install Instructions
 
 ### Ensure KUBECONFIG file is present
 
-You MUST ensure that the KUBECONFIG file for the DKP cluster is present on the same machine as the Ascender install script, located at `$HOME/.kube/config`.
+You MUST ensure that the KUBECONFIG file for the DKP cluster is present on the same machine as the installer, located at `$HOME/.kube/config`.
 
 ### Set the configuration variables for a DKP Install
 

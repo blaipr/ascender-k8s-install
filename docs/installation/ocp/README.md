@@ -1,9 +1,10 @@
-# Ascender Installation and Updating on OpenShift Container Platform (OCP)
+# OpenShift Container Platform (OCP) Cluster Installation
 
-The Ascender installer is a script that makes it relatively easy to install the Ascender Automation
-Platform on Kubernetes platforms of multiple flavors. The installer is being expanded to new
-Kubernetes platforms as users/contributors allow. If you have specific needs for a platform not yet
-supported, please submit an issue to this Github repository.
+This guide covers creating and configuring an OCP cluster with this
+repository. It was split from https://github.com/ctrliq/ascender-install,
+which now contains the steps for installing Ascender itself. If you
+need to install Ascender after the cluster is ready, use that
+repository.
 
 ## Table of Contents
 
@@ -14,7 +15,7 @@ supported, please submit an issue to this Github repository.
 ## General Prerequisites
 
 If you have not done so already, be sure to follow the general prerequisites found in the
-[Ascender-Install main README](../../README.md#general-prerequisites).
+[main README](../../README.md#general-prerequisites).
 
 ## OCP-specific Prerequisites
 
@@ -46,12 +47,12 @@ You can use the `git` command to clone the ascender-k8s-install repository or yo
 zipped archive. (Install `git` with `sudo yum -y install git` if it is not already present.)
 
 ```text
-$ git clone https://github.com/ctrliq/ascender-install.git
+$ git clone https://github.com/ctrliq/ascender-k8s-install.git
 ```
 
 This will create a directory named `ascender-k8s-install` in your present working directory (PWD).
 
-We will refer to this directory as the \<ASCENDER-INSTALL-SOURCE\> in the remainder of these
+We will refer to this directory as the \<K8S-INSTALL-SOURCE\> in the remainder of these
 instructions.
 
 ### Set the configuration variables for an OCP Install
@@ -59,15 +60,15 @@ instructions.
 Change directories into the newly created `ascender-k8s-install` and run the `config_vars.sh` script.
 
 ```text
-$ cd ascender-install
+$ cd ascender-k8s-install
 
 $ ./config_vars.sh
 ```
 
-The script will take you through a series of questions, that will populate the variables file
-required to install Ascender. This variables file will be located at `./custom.config.yml`.
+The script will take you through a series of questions that will populate the variables file
+required to create the OCP cluster. This variables file will be located at `./custom.config.yml`.
 
-You can edit this file manually if you want to change variables before (re)installing Ascender.
+You can edit this file manually if you want to change variables before (re)creating the cluster.
 
 **Important:** When configuring for OCP:
 - Set `k8s_platform` to `ocp`
@@ -90,6 +91,6 @@ Once the setup is completed successfully, you should see a final output similar 
 PLAY RECAP *************************************************************************************************************************
 localhost                  : ok=72   changed=27   unreachable=0    failed=0    skipped=4    rescued=0    ignored=0
 
-ASCENDER SUCCESSFULLY SETUP
+CLUSTER SUCCESSFULLY SETUP
 ```
 

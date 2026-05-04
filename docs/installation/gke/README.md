@@ -1,9 +1,8 @@
-The Ascender installer is a script that makes for relatively easy
-install of Ascender Automation Platform on Kubernetes platforms of
-multiple flavors. The installer is being expanded to new Kubernetes
-platforms as users/contributors allow, and if you have specific needs
-for a platform not yet supported, please submit an issue to this
-Github repository.
+This guide covers creating and configuring a GKE cluster with this
+repository. It was split from https://github.com/ctrliq/ascender-install,
+which now contains the steps for installing Ascender itself. If you
+need to install Ascender after the cluster is ready, use that
+repository.
 
 ## Table of Contents
 
@@ -15,8 +14,7 @@ Github repository.
 ## General Prerequisites
 
 If you have not done so already, be sure to follow the general
-prerequisites found in the [Ascender-Install main
-README](../../README.md#general-prerequisites)
+prerequisites found in the [main README](../../README.md#general-prerequisites)
 
 ## GKE-specific Prerequisites
 
@@ -58,14 +56,14 @@ In order to run the Ascender installer for GKE, some Google Cloud artifacts must
 
 ### Obtain the sources
 
-You can use the `git` command to clone the ascender-install repository or you can download the zipped archive. 
+You can use the `git` command to clone the ascender-k8s-install repository or you can download the zipped archive.
 
 To use git to clone the repository run:
 
 ```
-git clone https://github.com/ctrliq/ascender-install.git
+git clone https://github.com/ctrliq/ascender-k8s-install.git
 ```
-This will create a directory named `ascender-install` in your present working directory (PWD).
+This will create a directory named `ascender-k8s-install` in your present working directory (PWD).
 
 We will refer to this directory as the `<repository root>` in the remainder of this instructions.
 
@@ -89,13 +87,13 @@ You can run the bash script at
 <repository root>/config_vars.sh
 ```
 
-The script will take you through a series of questions, that will populate the variables file requires to install Ascender. This variables file will be located at:
+The script will take you through a series of questions that will populate the variables file required to create the GKE cluster. This variables file will be located at:
 
 ```
 <repository root>/custom.config.yml
 ```
 
-Afterward, you can simply edit this file should you not want to run the script again before installing Ascender.
+Afterward, you can simply edit this file should you not want to run the script again before recreating or reconfiguring the cluster.
 
 The following variables will be present after running the script:
 
@@ -129,34 +127,12 @@ PLAY RECAP *********************************************************************
 ascender_host              : ok=14   changed=6    unreachable=0    failed=0    skipped=2    rescued=0    ignored=0
 localhost                  : ok=72   changed=27   unreachable=0    failed=0    skipped=4    rescued=0    ignored=0
 
-ASCENDER SUCCESSFULLY SETUP
+CLUSTER SUCCESSFULLY SETUP
 ```
-
-
-### Connecting to Ascender Web UI
-
-You can connect to the Ascender UI at https://`ASCENDER_HOST`
-
-The username is and the corresponding password is stored in `<repository root>`/custom.config.yml under the `ASCENDER_ADMIN_USER` and `ASCENDER_ADMIN_PASSWORD` variables, respectively.
-
 
 ## Uninstall Instructions
 
-After running `setup.sh`, `tmp_dir` will contain timestamped kubernetes manifests for:
-
-- `ascender-deployment-{{ k8s_platform }}.yml`
-- `ledger-{{ k8s_platform }}.yml` (if you installed Ledger)
-- `kustomization.yml`
-
-It will also contain a directory called `gke-deploy`, if you provisioned a new GKE cluster with the Ascender installer. This directory will contain the terraform state files and artifacts for your GKE cluster.
-
-Remove the timestamp from the filename and then run the following
-commands from within `tmp_dir``:
-
-- `$ kubectl delete -f ascender-deployment-{{ k8s_platform }}.yml`
-- `$ kubectl delete pvc -n {{ ASCENDER_NAMESPACE }} postgres-15-ascender-app-postgres-15-0 (If you used the default postgres database)
-- `$ kubectl delete -f ledger-{{ k8s_platform }}.yml`
-- `$ kubectl delete -k .`
+After running `setup.sh`, `tmp_dir` will contain a directory called `gke-deploy`. This directory will contain the terraform state files and artifacts for your GKE cluster.
 
 To delete an GKE cluster created with the Ascender installer, run the following command from within the `tmp_dir`
 

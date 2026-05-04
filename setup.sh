@@ -167,6 +167,6 @@ else
   if [ ${RC} -ne 0 ]; then
     echo "ERROR OCCURRED DURING SETUP"
   else
-    echo "ASCENDER SUCCESSFULLY SETUP"
+    echo "CLUSTER SUCCESSFULLY SETUP"
   fi
 fi
