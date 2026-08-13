@@ -1,0 +1,30 @@
+---
+# ---Kubernetes-specific variables---
+
+k8s_platform: tkgi
+kube_install: false
+use_etc_hosts: true
+
+# Optional path to the kubeconfig used for TKGI cluster access.
+#TKGI_KUBECONFIG_PATH: "~/.kube/config"
+
+# Optional kubeconfig context.
+#TKGI_K8S_CONTEXT: ""
+
+# Optional explicit ingress class name.
+#TKGI_INGRESS_CLASS_NAME: contour
+
+# The namespace Ascender will later be installed into; used for the RBAC checks.
+ASCENDER_NAMESPACE: ascender
+
+# DNS resolvable hostname for the Ascender service; used for the local
+# /etc/hosts entry when use_etc_hosts is true.
+ASCENDER_HOSTNAME: ascender.example.com
+
+# Optional explicit StorageClass for PostgreSQL.
+#POSTGRES_STORAGE_CLASS: ""
+
+# Whether Ledger will be installed later; used for the local /etc/hosts entry
+# when use_etc_hosts is true.
+LEDGER_INSTALL: true
+LEDGER_HOSTNAME: ledger.example.com
