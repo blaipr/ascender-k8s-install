@@ -1,14 +1,9 @@
 ---
 # ---Kubernetes-specific variables---
 
-    # This variable specifies which Kubernetes platform Ascender and its components will be installed on.
-    # Options include k3s, eks and dkp, with more to come.
-k8s_platform: eks
-
-    # Determines whether to use HTTP or HTTPS for Ascender and Ledger.
-    # If set to https, you MUST provide certificate/key options for the Installer to use.
-    # options include http and https
-k8s_lb_protocol: http
+    # This variable specifies which Kubernetes platform will be provisioned or configured.
+    # Options include k3s, eks, aks, gke, rke2, dkp, ocp, and tkgi.
+k8s_platform: k3s
 
     # Routable IP address for the K8s API Server
     # (This could be a Load Balancer if using 3 K8s control nodes)
@@ -148,163 +143,53 @@ AKS_NUM_WORKER_NODES: 3
     # The volume size of aks worker nodes in GB
 AKS_WORKER_VOLUME_SIZE: 100
 
+    # ---gke variables---
+    # The name of the Google Cloud Project ID where the gke cluster should live
+GKE_PROJECT_ID: ascender-gke-project
+
+    # Determines whether to use Google Cloud DNS Domain Management (which is automated)
+    # Or a third-party service (e.g., Cloudflare, GoDaddy, etc.)
+    # If this value is set to false, you will have to manually set an A record for
+    # {{ASCENDER_HOSTNAME }} and {{ LEDGER_HOSTNAME }} to point to their corresponding
+    # Google Cloud Loadbalancers
+USE_GOOGLE_DNS: true
+
+    # The name of the gke cluster to install Ascender on - if it does not already exist, the installer can set it up
+GKE_CLUSTER_NAME: ascender-gke-cluster
+
+    # Specifies whether the GKE cluster needs to be provisioned (provision), exists but needs to be configured to support Ascender (configure), or exists and needs nothing done before installing Ascender (no_action)
+GKE_CLUSTER_STATUS: provision
+
+    # The Google Cloud zone hosting the gke cluster. To see a list of all available zones in your
+    # Google Cloud project, run: gcloud compute zones list --project <your-project-id>
+GKE_CLUSTER_ZONE: us-central1-a
+
+    # The kubernetes version for the gke cluster; available kubernetes versions can be determined
+    # by running: gcloud container get-server-config --zone <zone>
+GKE_K8S_VERSION: "1.29.4-gke.1043002"
+
+    # The gke worker node instance types
+GKE_INSTANCE_TYPE: "e2-medium"
+
+    # The desired number of gke worker nodes
+GKE_NUM_WORKER_NODES: 3
+
+    # The volume size of gke worker nodes in GB
+GKE_WORKER_VOLUME_SIZE: 100
+
     # ---dkp variables---
     # The name of the dkp cluster you wish to deploy Ascender to and/or create
-    # See a list of all dkp clusters with the command 
+    # See a list of all dkp clusters with the command
     # NOTE: This must be done while pointing to the DKP Bootstrap Cluster
 DKP_CLUSTER_NAME: dkp-cluster
 
     # ---rke2 variables---
 
-    # The URL to the binary file rke2.linux-amd64. If you want to choose a different 
+    # The URL to the binary file rke2.linux-amd64. If you want to choose a different
     # release, you can choose here:
     # https://github.com/rancher/rke2/releases
 RKE2_BINARY_URL: https://github.com/rancher/rke2/releases/download/v1.25.16%2Brke2r1/rke2.linux-amd64
 
-
-    # ---Local artifact variables---
-
-    # TLS Certificate file, required when deploying HTTPS in K3s
-tls_crt_path: "~/ascender.crt"
-
-    # TLS Private Key file, required when deploying HTTPS in K3s
-tls_key_path: "~/ascender.key"
-
-    # CA Bundle that contains both your CA Cert and other external CA bundles
-    # Such as the ones located at /etc/ssl/certs/ca-bundle.crt
-    # To create: "cat /etc/ssl/certs/ca-bundle.crt  ~/myca.crt > ~/my-ca-bundle.crt"
-#custom_cacert_bundle: "~/my-ca-bundle.crt"
-
-    # LDAP CA Cert
-#custom_ldap_cacert: "~/my-ldap-ca.crt"
-
-    # Set to false if using an external DNS server for resolution
-    # Set to true if not
+    # Boolean indicating whether to use the local /etc/hosts file for DNS resolution
 use_etc_hosts: true
 
-    # A directory in which to place both temporary artifacts
-    # and timestamped Kubernetes Manifests to make Ascender/Ledger easy
-    # to uninstall
-tmp_dir: "{{ playbook_dir }}/../ascender_install_artifacts"
-
-    # ---Ascender install variables---
-
-    # DNS resolvable hostname for Ascender service. This is required for install.
-ASCENDER_HOSTNAME: ascender.example.com
-
-    # The domain name for all components; required when k8s_platorm=="eks"
-ASCENDER_DOMAIN: example.com
-
-    # k8s namespace for Ascender k8s objects
-ASCENDER_NAMESPACE: ascender
-
-    # Administrator username for Ascender
-ASCENDER_ADMIN_USER: admin
-
-    # Administrator password for Ascender
-ASCENDER_ADMIN_PASSWORD: "myadminpassword"
-
-    # The OCI container image for Ascender
-ASCENDER_IMAGE: ghcr.io/ctrliq/ascender
-
-    # The image tag indicating the version of Ascender you wish to install
-ASCENDER_VERSION: 25.3.6
-
-    # The version of the AWX Operator used to install Ascender and its components
-ASCENDER_OPERATOR_VERSION: 2.19.5
-
-    # DNS resolvable hostname for Ascender Mesh service.  This is used by Execution Nodes to access Ascender.
-    # Mesh will not be setup unless this is configured
-#ASCENDER_MESH_HOSTNAME: mesh.ascender.example.com
-
-    # Determines whether to keep the secrets required to encrypt within Ascender (important when backing up)
-ascender_garbage_collect_secrets: true
-
-    # Setup extra demo playbooks after installation
-ascender_setup_playbooks: true
-
-    # External PostgreSQL ip or url resolvable by the cluster
-# ASCENDER_PGSQL_HOST: "ascenderpghost.example.com"
-
-    # External PostgreSQL port, this usually defaults to 5432
-# ASCENDER_PGSQL_PORT: 5432
-
-    # External PostgreSQL username
-# ASCENDER_PGSQL_USER: ascender
-
-    # External PostgreSQL password
-    # NOTE: Do NOT use the special characters in the postgres password (Django requirement)
-# ASCENDER_PGSQL_PWD: mypgadminpassword
-
-    # External PostgreSQL database name used for Ascender (this DB must exist)
-# ASCENDER_PGSQL_DB: ascenderdb
-
-    # Used to increase the default size of the Postgres Storage PVC.
-    # !!! Do not set or change this for an existing install !!!
-    # The Operator does not currently handle increasing sizes, must be done manually if your StorageClass allows
-# POSTGRES_PVC_SIZE_GB: 8
-
-    # Set the Storage Class for your PVC
-    # !!! Do not set or change this for an existing install !!!
-# POSTGRES_STORAGE_CLASS: local-path
-
-    ### All of these options are unnecessary to change, but will allow you to tweak your Ascender deployment if you choose to change them
-ascender_replicas: 1
-ascender_image_pull_policy: Always
-
-    # ---Ledger install variables---
-
-    # Determines whether or not Ledger will be installed
-LEDGER_INSTALL: true
-
-    # DNS resolvable hostname for Ledger service. This is required for install.
-LEDGER_HOSTNAME: ledger.example.com
-
-    # Optional credentials for pulling the ledger image, all fields must be
-    # specified.
-#LEDGER_REGISTRY:
-#  BASE: depot.ciq.com
-#  USERNAME: username
-#  PASSWORD: password
-
-    # The OCI container image for Ledger
-LEDGER_WEB_IMAGE: ghcr.io/ctrliq/ascender-ledger/ledger-web
-
-    # The number of ledger web pods - this is good to ensure high availability
-ledger_web_replicas: 1
-
-    # The OCI container image for the Ledger Parser
-LEDGER_PARSER_IMAGE: ghcr.io/ctrliq/ascender-ledger/ledger-parser
-
-    # The number of ledger parser pods - this is good to ensure high availability
-ledger_parser_replicas: 1
-
-    # The OCI container image for the Ledger Database
-LEDGER_DB_IMAGE: ghcr.io/ctrliq/ascender-ledger/ledger-db
-
-    # The image tag indicating the version of Ledger you wish to install
-LEDGER_VERSION: latest
-
-    # The Kubernetes namespace in which Ledger objects will live
-LEDGER_NAMESPACE: ledger
-
-    # Admin password for Ledger (the username is admin by default)
-LEDGER_ADMIN_PASSWORD: "myadminpassword"
-
-    # Uncomment these to use an external database for Ledger
-#LEDGER_DB_HOST: db
-#LEDGER_DB_PORT: "3306"
-#LEDGER_DB_NAME: "ledger"
-#LEDGER_DB_USERNAME: "ledger"
-
-    # Size of the Persistent Volume Claim for Ledger's database in GB
-    # Only uncomment on new installs or with storage classes that support volume expansion
-#LEDGER_PVC_SIZE_GB: 10
-    # Storage Class for the Persistent Volume Claim for Ledger's database
-    # Only uncomment to set a specific storage class on new installs
-    # Leaving blank will use the default storage class of the cluster
-#LEDGER_PVC_STORAGE_CLASS: ""
-
-
-    # Password for Ledger database
-LEDGER_DB_PASSWORD: "mydbpassword"

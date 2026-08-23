@@ -8,6 +8,7 @@ These guides will walk you through the basics of setting up Ascender for the dif
 - [Lightweight Kubernetes (k3s)](installation/k3s/README.md)
 - [RKE Government (RKE2)](installation/rke2/README.md)
 - [OpenShift Container Platform (OCP)](installation/ocp/README.md)
+- [VMware Tanzu Kubernetes Grid Integrated (TKGI)](installation/tkgi/README.md)
 
 
 # Configuration Guides
