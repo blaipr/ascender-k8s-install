@@ -62,9 +62,9 @@ metadata:
 type: kubernetes.io/tls
 {% endif %}
 ---
-# Ascender AWX Object
-apiVersion: awx.ansible.com/v1beta1
-kind: AWX
+# The Ascender deployment object
+apiVersion: {{ ascender_cr_api_version }}
+kind: {{ ascender_cr_kind }}
 metadata:
   name: ascender-app
   namespace: {{ ASCENDER_NAMESPACE }}
@@ -107,8 +107,8 @@ spec:
       - https://{{ ASCENDER_HOSTNAME }}
 {% if ASCENDER_MESH_HOSTNAME is defined %}
 ---
-apiVersion: awx.ansible.com/v1alpha1
-kind: AWXMeshIngress
+apiVersion: {{ ascender_mesh_ingress_api_version }}
+kind: {{ ascender_mesh_ingress_kind }}
 metadata:
   name: ascender-app-mesh
   namespace: {{ ASCENDER_NAMESPACE }}
