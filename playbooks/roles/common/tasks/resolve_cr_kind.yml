@@ -58,6 +58,8 @@
     ascender_restore_kind: "{{ 'AWXRestore' if _use_awx_kind | bool else 'AscenderRestore' }}"
     ascender_mesh_ingress_kind: "{{ 'AWXMeshIngress' if _use_awx_kind | bool else 'AscenderMeshIngress' }}"
     ascender_mesh_ingress_api_version: "{{ 'awx.ansible.com/v1alpha1' if _use_awx_kind | bool else 'ascender.ansible.com/v1alpha1' }}"
+    ascender_deployment_type: "{{ 'awx' if _use_awx_kind | bool else 'ascender' }}"
+    ascender_managed_by: "{{ 'awx-operator' if _use_awx_kind | bool else 'ascender-operator' }}"
 
 - name: Report which kind this run will use
   ansible.builtin.debug:
