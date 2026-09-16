@@ -68,7 +68,7 @@
   kubernetes.core.k8s_info:
     kind: Deployment
     wait: yes
-    name: awx-operator-controller-manager
+    name: "{{ ascender_operator_deployment }}"
     namespace: "{{ ASCENDER_NAMESPACE }}"
     wait_sleep: 10
     wait_timeout: 360

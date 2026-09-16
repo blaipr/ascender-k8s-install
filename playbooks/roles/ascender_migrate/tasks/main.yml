@@ -221,7 +221,7 @@
     wait_timeout: 180
     verify_ssl: false
   loop:
-    - awx-operator-controller-manager
+    - "{{ ascender_operator_deployment }}"
     - ascender-app-task
     - ascender-app-web
 
@@ -282,7 +282,7 @@
     wait_timeout: 180
     verify_ssl: false
   loop:
-    - awx-operator-controller-manager
+    - "{{ ascender_operator_deployment }}"
 
 - name: Search for all Pods labelled app=web
   kubernetes.core.k8s_info:

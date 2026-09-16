@@ -61,6 +61,27 @@
     ascender_deployment_type: "{{ 'awx' if _use_awx_kind | bool else 'ascender' }}"
     ascender_managed_by: "{{ 'awx-operator' if _use_awx_kind | bool else 'ascender-operator' }}"
 
+- name: Look for the operator deployment under both of its names
+  kubernetes.core.k8s_info:
+    api_version: apps/v1
+    kind: Deployment
+    name: "{{ item }}"
+    namespace: "{{ ASCENDER_NAMESPACE }}"
+    verify_ssl: false
+  register: _operator_deployments
+  loop:
+    - ascender-operator-controller-manager
+    - awx-operator-controller-manager
+
+# ascender-operator#54 renames the operator's own objects. Both names exist at
+# once during an upgrade, until the old set is removed, so the new one wins.
+- name: Name the operator deployment
+  ansible.builtin.set_fact:
+    ascender_operator_deployment: >-
+      {{ 'ascender-operator-controller-manager'
+         if ((_operator_deployments.results[0].resources | default([]) | length) > 0)
+         else 'awx-operator-controller-manager' }}
+
 - name: Report which kind this run will use
   ansible.builtin.debug:
     msg: >-
