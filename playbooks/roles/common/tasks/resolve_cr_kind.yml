@@ -16,6 +16,22 @@
 # resolves, so an absent CRD comes back as an empty list rather than an error,
 # and the task is left to fail normally on a real one: guessing the kind from a
 # question the cluster never answered is not something to do quietly.
+#
+# Reading CustomResourceDefinitions is cluster scoped, so a user who only holds
+# a namespace is refused it. Setting k8s_cr_kind to AWX or Ascender skips both
+# lookups and takes that kind as given, which is how a namespace-only install
+# is told the kind its cluster administrator installed. It is a separate name
+# from ascender_cr_kind because this file sets that one, and a second include
+# in the same run would otherwise mistake its own earlier answer for the
+# caller's.
+
+- name: Check the kind given in k8s_cr_kind
+  ansible.builtin.assert:
+    that:
+      - k8s_cr_kind in ['AWX', 'Ascender']
+    fail_msg: "k8s_cr_kind must be AWX or Ascender, not {{ k8s_cr_kind }}"
+    quiet: true
+  when: k8s_cr_kind | default('') | length > 0
 
 - name: Look up which deployment CRDs the operator serves
   kubernetes.core.k8s_info:
@@ -27,11 +43,13 @@
   loop:
     - awxs.awx.ansible.com
     - ascenders.ascender.ansible.com
+  when: k8s_cr_kind | default('') | length == 0
 
 - name: Note which groups are served
   ansible.builtin.set_fact:
     _awx_crd_present: "{{ (_deployment_crds.results[0].resources | length) > 0 }}"
     _ascender_crd_present: "{{ (_deployment_crds.results[1].resources | length) > 0 }}"
+  when: k8s_cr_kind | default('') | length == 0
 
 - name: Look for a deployment already managed through the AWX kind
   kubernetes.core.k8s_info:
@@ -41,7 +59,9 @@
     namespace: "{{ ASCENDER_NAMESPACE }}"
     verify_ssl: false
   register: _existing_awx_cr
-  when: _awx_crd_present | bool
+  when:
+    - k8s_cr_kind | default('') | length == 0
+    - _awx_crd_present | bool
 
 - name: Decide which kind to use
   ansible.builtin.set_fact:
@@ -49,6 +69,13 @@
     _use_awx_kind: >-
       {{ ((_existing_awx_cr.resources | default([]) | length) > 0)
          or (not _ascender_crd_present | bool) }}
+  when: k8s_cr_kind | default('') | length == 0
+
+- name: Take the kind given in k8s_cr_kind
+  ansible.builtin.set_fact:
+    _existing_awx: false
+    _use_awx_kind: "{{ k8s_cr_kind == 'AWX' }}"
+  when: k8s_cr_kind | default('') | length > 0
 
 - name: Set the kinds for this run
   ansible.builtin.set_fact:
@@ -66,7 +93,9 @@
     msg: >-
       Managing {{ ascender_instance_name }} through {{ ascender_cr_kind }}
       ({{ ascender_cr_api_version }}), {{
-        'which is the kind it already exists under'
+        'as set in k8s_cr_kind'
+        if k8s_cr_kind | default('') | length > 0
+        else 'which is the kind it already exists under'
         if _existing_awx | bool
         else (
           'because this operator does not serve ascender.ansible.com yet'

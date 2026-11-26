@@ -35,6 +35,11 @@ k8s_ee_pull_credentials_secret: None
     # This is implied when kube_install is true, as that run creates the cluster and its kubeconfig
 download_kubeconfig: false
 
+    # Which operator kind manages Ascender: AWX or Ascender. Leave unset and the installer
+    # asks the cluster, which needs read access to CustomResourceDefinitions. Set it when
+    # the installing user holds only a namespace and cannot read them.
+# k8s_cr_kind: Ascender
+
     # ---k3s variables---
 
     # IP address for the K3s Master/Worker node
